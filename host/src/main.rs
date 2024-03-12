@@ -6,31 +6,9 @@ use methods::{
     METHOD_ELF, METHOD_ID
 };
 use risc0_zkvm::{default_prover, ExecutorEnv};
-use sha2::{Digest, Sha256};
 
-struct SimpleSha256Hasher {
-    hasher: Sha256,
-}
+use simple_hasher::SimpleSha256Hasher;
 
-impl SimpleSha256Hasher {
-    fn new() -> Self {
-        SimpleSha256Hasher { hasher: Sha256::new() }
-    }
-
-    fn result(self) -> [u8; 32]  {
-        self.hasher.finalize().into()
-    }
-}
-
-impl core::hash::Hasher for SimpleSha256Hasher {
-    fn finish(&self) -> u64 {
-        0
-    }
-
-    fn write(&mut self, bytes: &[u8]) {
-        self.hasher.update(bytes);
-    }
-}
 
 fn main() {
     // Initialize tracing. In order to view logs, run `RUST_LOG=info cargo run`
@@ -42,15 +20,13 @@ fn main() {
     let input: u64 = 15 * u64::pow(2, 27) + 1;
 
     let mut account_info = AccountInfo::from_balance(U256::from(100_000));
-
     account_info.nonce = input;
-
-    tracing::info!("Account info: {:?}", account_info);
 
     let mut hasher = SimpleSha256Hasher::new();
     account_info.hash(&mut hasher);
     let result = hasher.result();
 
+    tracing::info!("Account info: {:?}, hash: {:?}", account_info, result);
 
     // An executor environment describes the configurations for the zkVM
     // including program inputs.

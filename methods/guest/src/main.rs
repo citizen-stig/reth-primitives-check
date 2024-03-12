@@ -11,31 +11,7 @@ risc0_zkvm::guest::entry!(main);
 
 
 use core::hash::Hash;
-use sha2::{Digest, Sha256};
-
-struct SimpleSha256Hasher {
-    hasher: Sha256,
-}
-
-impl SimpleSha256Hasher {
-    fn new() -> Self {
-        SimpleSha256Hasher { hasher: Sha256::new() }
-    }
-
-    fn result(self) -> [u8; 32]  {
-        self.hasher.finalize().into()
-    }
-}
-
-impl core::hash::Hasher for SimpleSha256Hasher {
-    fn finish(&self) -> u64 {
-        0
-    }
-
-    fn write(&mut self, bytes: &[u8]) {
-        self.hasher.update(bytes);
-    }
-}
+use simple_hasher::SimpleSha256Hasher;
 
 fn main() {
     let nonce: u64 = env::read();
