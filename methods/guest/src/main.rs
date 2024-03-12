@@ -19,6 +19,7 @@ fn main() {
     let nonce: u32 = env::read();
     let account_info: AccountInfo = env::read();
     let input_result: [u8; 32] = env::read();
+    let empty_s_hash_input: [u8; 32] = env::read();
 
     let mut hasher = SimpleSha256Hasher::new();
     account_info.hash(&mut hasher);
@@ -37,6 +38,13 @@ fn main() {
 
     // assert_eq!(result, input_result, "hashes do not match");
     assert_eq!(nonce as u64, account_info.nonce, "nonce do not match");
+
+    let s = b"";
+    let mut empty_string_hasher = SimpleSha256Hasher::new();
+    s.hash(&mut empty_string_hasher);
+    let empty_s_hash = empty_string_hasher.result();
+
+    assert_eq!(empty_s_hash, empty_s_hash_input, "empty hashes do not match");
 
     // write public output to the journal
     env::commit(&nonce);

@@ -28,12 +28,19 @@ fn main() {
 
     tracing::info!("Account info: {:?}, hash: {:?}", account_info, result);
 
+    let s = b"";
+    let mut empty_string_hasher = SimpleSha256Hasher::new();
+    s.hash(&mut empty_string_hasher);
+    let empty_s_hash = empty_string_hasher.result();
+
     let env = ExecutorEnv::builder()
         .write(&input)
         .unwrap()
         .write(&account_info)
         .unwrap()
         .write(&result)
+        .unwrap()
+        .write(&empty_s_hash)
         .unwrap()
         .build()
         .unwrap();
