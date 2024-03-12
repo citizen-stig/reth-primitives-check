@@ -17,28 +17,16 @@ fn main() {
         .init();
 
     // For example:
-    let input: u64 = 15 * u64::pow(2, 27) + 1;
+    let input: u32 = 15;
 
     let mut account_info = AccountInfo::from_balance(U256::from(100_000));
-    account_info.nonce = input;
+    account_info.nonce = input as u64;
 
     let mut hasher = SimpleSha256Hasher::new();
     account_info.hash(&mut hasher);
     let result = hasher.result();
 
     tracing::info!("Account info: {:?}, hash: {:?}", account_info, result);
-
-    // An executor environment describes the configurations for the zkVM
-    // including program inputs.
-    // An default ExecutorEnv can be created like so:
-    // `let env = ExecutorEnv::builder().build().unwrap();`
-    // However, this `env` does not have any inputs.
-    //
-    // To add add guest input to the executor environment, use
-    // ExecutorEnvBuilder::write().
-    // To access this method, you'll need to use ExecutorEnv::builder(), which
-    // creates an ExecutorEnvBuilder. When you're done adding input, call
-    // ExecutorEnvBuilder::build().
 
     let env = ExecutorEnv::builder()
         .write(&input)
